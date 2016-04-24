@@ -1,3 +1,6 @@
+from Queue import Queue
+
+
 class Node(object):
     def __init__(self, value, left=None, right=None):
         self.left = left
@@ -18,26 +21,51 @@ class Node(object):
             self.right = self.right.adddigit(digit)
         return self
 
-    def printNodes(self):
+    def print_tree(self):
         if self.left is not None or self.right is not None:
-            self.left.printNodes()
+            self.left.print_tree()
             # print self
-            self.right.printNodes()
+            self.right.print_tree()
         elif self.left is None and self.right is None:
-            print "PrintNodes:", self
+            print "print_tree:", self
+
+    def get_items(self):
+        l1 = []
+        if self.left is not None or self.right is not None:
+            l1 += self.left.get_items()
+            l1 += self.right.get_items()
+        elif self.left is None and self.right is None:
+            l1.append([self.data[1], self.data[2]])
+        return l1
+
+
+def bfs(node, data, searchforbitstring):
+    mycompare = mycompare2 if searchforbitstring else mycompare1
+    queue = Queue()
+    queue.put(node)
+    while queue.not_empty:
+        current = queue.get()
+        if mycompare(data, current.data) != 0:
+            return current
+        elif current.left is None:
+            continue
+        else:
+            queue.put(current.left)
+            queue.put(current.right)
+
+
+
 
 
 def search(node, data, searchforbitstring):
-    if searchforbitstring:
-        mycompare = 2
-    else:
-        mycompare = mycompare1
     """
-    :param node: Node object
-    :param data: data to be searched for
-    :param searchforbitstring: boolean
-    :return:
-    """
+        :param node: Node object
+        :param data: data to be searched for
+        :param searchforbitstring: boolean
+        :return:
+        """
+    mycompare = mycompare2 if searchforbitstring else mycompare1
+
     # print "searchenter", False==0
     if node is None:
         # print "didn't get anything"
@@ -51,25 +79,6 @@ def search(node, data, searchforbitstring):
             return r
         else:
             return l
-
-            # apparently I don't need delete for now
-
-
-def printTree(node, depth=0):
-    ret = ""
-
-    # Print right branch
-    if node.right != None:
-        ret += printTree(node.right, depth + 1)
-
-    # Print own value
-    ret += "\n" + ("    " * depth) + str(node.data)
-
-    # Print left branch
-    if node.left != None:
-        ret += printTree(node.left, depth + 1)
-
-    return ret
 
 
 def mycompare1(d1, d2):
